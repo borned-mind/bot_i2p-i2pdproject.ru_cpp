@@ -7,6 +7,8 @@ constexpr const char help_str[]="help -> help menu\n"
 				 "get_list -> get list of servers\n"
 				 "add @serv -> add server to list\n" ;
 
+constexpr auto timeoutSec = std::chrono::seconds(120);
+
 
 bool Commands::isXMPP(std::string & servaddr)noexcept{
 	try{
@@ -64,17 +66,27 @@ void Commands::Add_list(gloox::Client & client, const gloox::Message & stanza){
 		args.push_back(tmp);
     }
 
+
+
     if( args.size() < 2 || args.size() > 2) 
 	send_msg(std::ref(client), std::ref(stanza), "add @serv_addr");
     else if( serv_exists(args[1]) )
 	send_msg(std::ref(client), std::ref(stanza), "Serv already added.");	
-    else if(  !isXMPP( args[1] ) )
-	send_msg(std::ref(client), std::ref(stanza), "Is not XMPP.");	
-    else if(!db->sql( add_server_table, args[1] ))
-        	throw( std::runtime_error( db->error() ) );
     else{
-	std::cout << "added " << args[1] << std::endl;
-  	servers.push_back( args[1] );
-   	send_msg( std::ref(client), std::ref(stanza), "Added" );
-    }
+
+	 //auto methd = std::bind(&Commands::isXMPP, this, std:: _Placeholder<1>() ) ;
+	 auto methd = std::bind(&Commands::isXMPP, this, args[1] );
+	 auto isXMPPRes = std::async( std::launch::async, methd );
+	 if(  isXMPPRes.wait_for(timeoutSec) == std::future_status::timeout  )
+			send_msg(std::ref(client), std::ref(stanza), "Timeout.");
+	else if ( isXMPPRes.get() == false )
+			send_msg(std::ref(client), std::ref(stanza), "It is not XMPP?.");
+	else if(!db->sql( add_server_table, args[1] ))
+        		throw( std::runtime_error( db->error() ) );
+    	else{
+		std::cout << "added " << args[1] << std::endl;
+  		servers.push_back( args[1] );
+   		send_msg( std::ref(client), std::ref(stanza), "Added" );
+    	     }
+   }
 }

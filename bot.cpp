@@ -24,7 +24,6 @@ void Bot::threadMsgHandle(const gloox::Message & stanza, gloox::MessageSession* 
 }
 
 void Bot::handleMessage(const gloox::Message & stanza, gloox::MessageSession* session ) noexcept{
-	//TODO: copy 
 	threads.push_back(std::move( std::thread(&Bot::threadMsgHandle, this, std::ref(stanza), session) )  );
 	std::this_thread::sleep_for( std::chrono::seconds( 1 ) );
 }
@@ -39,7 +38,8 @@ void Bot::InstallDB(void){
 	//sql_exec(servers_table_install);
 }
 
-Bot::Bot(std::string & serv_addr, bool UseProxy, bool dissconectAfter, ProxyArgs proxArg){
+Bot::Bot(std::string & serv_addr, bool UseProxy, bool dissconectAfter, ProxyArgs proxArg):
+	wasConnected(false){
 	client = new gloox::Client{serv_addr};
   	client->registerConnectionListener( this );
 
@@ -58,7 +58,8 @@ Bot::Bot(std::string & serv_addr, bool UseProxy, bool dissconectAfter, ProxyArgs
 		client->disconnect();
 }
 
-Bot::Bot(gloox::JID jid, std::string password, bool UseProxy, ProxyArgs proxArg){
+Bot::Bot(gloox::JID jid, std::string password, bool UseProxy, ProxyArgs proxArg):
+	wasConnected(false){
 		std::cout << "Set MessMap" << std::endl;
 		fMessMap[help_com]=&Bot::Help;
 		fMessMap[get_list_com]=&Bot::Get_list;

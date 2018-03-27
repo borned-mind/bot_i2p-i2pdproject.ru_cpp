@@ -6,7 +6,7 @@
 
 
 constexpr long long secondstimeout=1;
-constexpr char secsthrdelete=15;
+constexpr unsigned char secsthrdelete=15;
 
 enum class ProxyType{
 	none, http, socks5
@@ -47,13 +47,16 @@ private:
 	std::vector< std::thread > threads;
 	std::thread * delThread;
 	void deleteThread(void){
+		try{
+			std::this_thread::sleep_for( std::chrono::seconds( secsthrdelete ) );
+			std::cout << "Delete thread" << std::endl;
+			for( auto it = threads.begin(); it!=threads.end(); it++ )
+				it->join();
+			threads.resize(0);
+		}catch(std::system_error & e){
+			std::cerr << e.what() << std::endl;
+		}catch(...){}
 
-		std::this_thread::sleep_for( std::chrono::seconds( secsthrdelete ) );
-		std::cout << "Delete thread" << std::endl;
-		for( auto it = threads.begin(); it!=threads.end(); it++ ){
-			it->join();
-		}
-		threads.resize(0);
 		deleteThread();
 	}
 private:
