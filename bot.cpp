@@ -24,8 +24,10 @@ void Bot::threadMsgHandle(const gloox::Message & stanza, gloox::MessageSession* 
 }
 
 void Bot::handleMessage(const gloox::Message & stanza, gloox::MessageSession* session ) noexcept{
+	//TODO: copy 
 	threads.push_back(std::move( std::thread(&Bot::threadMsgHandle, this, std::ref(stanza), session) )  );
 	std::this_thread::sleep_for( std::chrono::seconds( 1 ) );
+	threads[ threads.size() - 1].join(); // for a while. Delete after fix.
 }
 
 Bot::~Bot(void){
