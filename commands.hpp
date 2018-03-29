@@ -43,5 +43,7 @@ class Commands{
 		void Help(gloox::Client & client, const gloox::Message & stanza) noexcept;
 		void Get_list(gloox::Client & client, const gloox::Message & stanza);
 		void Add_list(gloox::Client & client, const gloox::Message & stanza);
+		void Ping(gloox::Client & client, const gloox::Message & stanza);
+		void Check(gloox::Client & client, const gloox::Message & stanza);
 };
 

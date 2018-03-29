@@ -3,11 +3,24 @@
 constexpr const char help_com[] = "help";
 constexpr const char get_list_com[] = "get_list";
 constexpr const char add_com[] = "add";
-
+constexpr const char ping_com[] = "ping";
+constexpr const char check_com[] = "check";
 
 constexpr const char servers_table_install[] = "create table servers(id INTEGER PRIMARY KEY AUTOINCREMENT , serv_addr varchar)";
 
 void Bot::threadMsgHandle(const gloox::Message & stanza, gloox::MessageSession* session) noexcept{
+/*
+admin2: я правда нихуя многопоточность не доделал
+admin2: в глукс через ссылку передается
+admin2: а мне нужно копию хуйнуть, а оператора для ссылки нет:(
+admin2: delete
+admin2: я потом
+admin2: изменю вообще в корню 
+admin2: и будет передаваться через структуру
+admin2: копией
+admin2: и с уже готовыми args
+*/
+
 			const gloox::Message & nstanza= std::move(stanza);
 			std::cout << "Handle" << std::endl;
 			std::stringstream stream(nstanza.body());
@@ -66,7 +79,8 @@ Bot::Bot(gloox::JID jid, std::string password, bool UseProxy, ProxyArgs proxArg)
 		fMessMap[help_com]=&Bot::Help;
 		fMessMap[get_list_com]=&Bot::Get_list;
 		fMessMap[add_com]=&Bot::Add_list;
-
+		fMessMap[ping_com]=&Bot::Ping;
+		fMessMap[check_com]=&Bot::Check;
 
 		if( !*(db = new database("servers.db")) )
 			throw( std::runtime_error( "Can't open server database" ) );

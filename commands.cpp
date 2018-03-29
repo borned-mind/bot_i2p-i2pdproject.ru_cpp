@@ -1,11 +1,16 @@
 #include"commands.hpp"
 #include"bot.hpp"
+#include"SimplyClassSocket.hpp"
 
 constexpr const char add_server_table[] = "INSERT INTO servers(serv_addr) values(?)";
 constexpr const char get_list_str[] = "select serv_addr from servers";
 constexpr const char help_str[]="help -> help menu\n"
 				 "get_list -> get list of servers\n"
-				 "add @serv -> add server to list\n" ;
+				 "add @serv -> add server to list\n"
+				  "ping -> ping of bot\n"
+					"check @serv_addr @port\n" ;
+
+constexpr const char ping_str[] = "PONG";
 
 constexpr auto timeoutSec = std::chrono::seconds(120);
 
@@ -56,6 +61,32 @@ void Commands::Get_list(gloox::Client & client, const gloox::Message & stanza){
 		send_msg( std::ref(client), std::ref(stanza), "List is empty" );
 	}
 } 
+
+void Commands::Ping(gloox::Client & client, const gloox::Message & stanza){
+	send_msg(std::ref(client), std::ref(stanza), ping_str);
+}
+
+void Commands::Check(gloox::Client & client, const gloox::Message & stanza){
+	std::istringstream stream(stanza.body());
+	std::vector<std::string> args;
+	std::string tmp;
+	while( std::getline( stream, tmp, ' ') )
+		args.push_back(tmp);
+	if(args.size() < 3 || args.size()  > 3){
+		send_msg(std::ref(client), std::ref(stanza), "check @serv_addr @port");
+	}else{
+		try{
+			Dark::Socks5Proxy host(args[1].c_str(), atoi( args[2].c_str() ) );
+			if( !host.connected_succesfully() ){
+				send_msg(std::ref(client), std::ref(stanza), "Can't connect");
+			}else{
+				send_msg(std::ref(client), std::ref(stanza), "Connected");
+			}
+		}catch(...){
+			send_msg(std::ref(client), std::ref(stanza), "ERROR with connecting");
+		}
+	}
+}
 
 void Commands::Add_list(gloox::Client & client, const gloox::Message & stanza){
     std::cout << "add serv" << std::endl;
