@@ -323,11 +323,10 @@ shutdown(socket,how);
 
 namespace Dark{
 
-Socks5Proxy::Socks5Proxy(const char * host,int port,
-const char * proxy_host,const int proxy_port){
+Socks5Proxy::Socks5Proxy(const char * proxy_host,const int proxy_port){
 
 try{
-set_sock(init_socket_tcp());
+	set_sock(init_socket_tcp());
 }
 
 catch(Sockets::for_throws err){
@@ -356,18 +355,6 @@ if(!this->error){
 	} 
 
 }// if not error
-
-
-
-if( !SocksConnect(host,port) ){
-
-try{
- close_self_sock(); // close self sock.
-}catch(Sockets::for_throws err){}//try{...}catch{}
- this->error=true;
-
-}//if
-
 
 }
 

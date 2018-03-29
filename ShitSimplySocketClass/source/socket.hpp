@@ -209,8 +209,7 @@ bool isset_error(void){
 }bool get_error(void){
 	return error;
 }
-
-Socks5Proxy(const char * host,int port,const char * proxy_host="127.0.0.1",const int proxy_port=4447);
+Socks5Proxy(const char * proxy_host="127.0.0.1",const int proxy_port=4447);
 bool ReConnectToDark(void);
 bool SocksConnect(const char * host,const int port);
 bool SocksConnect(void);
