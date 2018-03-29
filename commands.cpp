@@ -67,6 +67,7 @@ void Commands::Ping(gloox::Client & client, const gloox::Message & stanza){
 }
 
 void Commands::Check(gloox::Client & client, const gloox::Message & stanza){
+try{
 	std::istringstream stream(stanza.body());
 	std::vector<std::string> args;
 	std::string tmp;
@@ -75,17 +76,18 @@ void Commands::Check(gloox::Client & client, const gloox::Message & stanza){
 	if(args.size() < 3 || args.size()  > 3){
 		send_msg(std::ref(client), std::ref(stanza), "check @serv_addr @port");
 	}else{
-		try{
+		
 			Dark::Socks5Proxy host(args[1].c_str(), atoi( args[2].c_str() ) );
 			if( !host.connected_succesfully() ){
 				send_msg(std::ref(client), std::ref(stanza), "Can't connect");
 			}else{
 				send_msg(std::ref(client), std::ref(stanza), "Connected");
 			}
-		}catch(...){
+		
+	}
+}catch(Sockets::for_throws thr){
 			send_msg(std::ref(client), std::ref(stanza), "ERROR with connecting");
 		}
-	}
 }
 
 void Commands::Add_list(gloox::Client & client, const gloox::Message & stanza){

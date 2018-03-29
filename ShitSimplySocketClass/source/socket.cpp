@@ -24,7 +24,7 @@ bool Socket::close_connect(int socket){
    close(socket);
 }
 void Socket::close_self_sock(void){
-   if(!this->status_sock) throw(not_exist_sock);
+   //if(!this->status_sock) throw(not_exist_sock);
    close(this->self_socket);
    this->status_sock = not_inited;
 }void Socket::close_socket(int socket){
