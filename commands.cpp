@@ -77,6 +77,7 @@ try{
 		send_msg(std::ref(client), std::ref(stanza), "check @serv_addr @port");
 	}else{
 		
+			//TODO: Fix, not correctly work.
 			Dark::Socks5Proxy host{};
 			if( !host.SocksConnect( args[1].c_str(), atoi( args[2].c_str() ) ) ){
 				send_msg(std::ref(client), std::ref(stanza), "Can't connect");
