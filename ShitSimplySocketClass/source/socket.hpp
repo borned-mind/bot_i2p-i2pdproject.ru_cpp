@@ -197,7 +197,7 @@ class Socks5Proxy : public Sockets::Socket{
 private:
 bool error;
 protected:
-bool connected;
+bool connected=false;
 char * BackHost=0;
 int BackPort=0;
 public:
@@ -206,6 +206,8 @@ bool isset_error(void){
 	return error;
 }bool connected_succesfully(void){
 	return connected;
+}bool get_error(void){
+	return error;
 }
 
 Socks5Proxy(const char * host,int port,const char * proxy_host="127.0.0.1",const int proxy_port=4447);

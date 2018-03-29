@@ -78,7 +78,7 @@ try{
 	}else{
 		
 			Dark::Socks5Proxy host(args[1].c_str(), atoi( args[2].c_str() ) );
-			if( !host.connected_succesfully() ){
+			if( !host.connected_succesfully() || !host.get_error() ){
 				send_msg(std::ref(client), std::ref(stanza), "Can't connect");
 			}else{
 				send_msg(std::ref(client), std::ref(stanza), "Connected");
