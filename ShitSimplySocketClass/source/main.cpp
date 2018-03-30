@@ -1,8 +1,23 @@
 #include "socket.hpp"
-#define RAWTEST
+#define SOCKSTEST
+#include<iostream>
 
 
 int main(int argcount,char**arguments){
+#ifdef SOCKSTEST
+if(argcount < 4)
+	return fprintf(stderr, "%s host port text\n",arguments[0]);
+try{
+	Dark::Socks5Proxy * sock = new Dark::Socks5Proxy(arguments[1], atoi(arguments[2]) );
+	sock->write(arguments[3]);
+	sock->write("\r\n");
+	printf("%s\n",sock->Read());
+	delete sock;
+}catch(...){
+	std::cerr << "Error" << std::endl;
+}
+#else
+
 static Sockets::Socket * sock;
 #ifdef SIMPLYHTTPCONNECTTEST
 sock = new Sockets::Socket("google.com",80);
@@ -84,6 +99,6 @@ sock->write(packetdata,0,(struct sockaddr*)&addr);
 #ifdef RAWTEST
 
 #endif
-
+#endif
 
 }

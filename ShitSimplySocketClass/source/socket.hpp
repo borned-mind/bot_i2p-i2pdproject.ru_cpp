@@ -171,7 +171,7 @@ namespace Sockets{
       udp_packet Read_Other(unsigned long long sizebuf=4096,int flags=0);
       char * Read_from(int socket,unsigned long long sizebuf=1024);
       void set_sock(int socket);
-      virtual bool connect_to(const char * host,int port);
+      virtual bool connect_to(const char * host,int port, struct timeval timeout={10,0});
       virtual bool binding(const char * host,int port,int maxlisten=100);
       virtual bool close_connect(int socket);
 

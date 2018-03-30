@@ -8,7 +8,7 @@ constexpr const char help_str[]="help -> help menu\n"
 				 "get_list -> get list of servers\n"
 				 "add @serv -> add server to list\n"
 				  "ping -> ping of bot\n"
-					"check @serv_addr @port\n" ;
+					"check @serv_addr @port @text(optional)\n" ;
 
 constexpr const char ping_str[] = "PONG";
 
@@ -73,23 +73,29 @@ try{
 	std::string tmp;
 	while( std::getline( stream, tmp, ' ') )
 		args.push_back(tmp);
-	if(args.size() < 3 || args.size()  > 3){
-		send_msg(std::ref(client), std::ref(stanza), "check @serv_addr @port");
+	if(args.size() < 3 || args.size()  > 4){
+		send_msg(std::ref(client), std::ref(stanza), "check @serv_addr @port @text(GET /)");
 	}else{
 		
 			//TODO: Fix, not correctly work.
 			Dark::Socks5Proxy host{};
 			if( !host.SocksConnect( args[1].c_str(), atoi( args[2].c_str() ) ) ){
 				send_msg(std::ref(client), std::ref(stanza), "Can't connect");
-			}else{
-				send_msg(std::ref(client), std::ref(stanza), "Connected");
+			}else{	
+				
+				send_msg(std::ref(client), std::ref(stanza), "Connected, try write to port");
+				if(args.size() == 4)
+					host.write(args[3]);
+				else
+					host.write("GET /\r\n");
+				send_msg(std::ref(client), std::ref(stanza), "Write works...");
 			}
 		
+	}//else
+}catch(...){
+			send_msg(std::ref(client), std::ref(stanza), "ERROR with connecting/write/error");
 	}
-}catch(Sockets::for_throws thr){
-			send_msg(std::ref(client), std::ref(stanza), "ERROR with connecting");
-		}
-}
+}//func
 
 void Commands::Add_list(gloox::Client & client, const gloox::Message & stanza){
     std::cout << "add serv" << std::endl;

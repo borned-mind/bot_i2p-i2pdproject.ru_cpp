@@ -32,7 +32,7 @@ void Socket::close_self_sock(void){
 }
 
 
-bool Socket::connect_to(const char * host,int port){
+bool Socket::connect_to(const char * host,int port, struct timeval timeout){
    if(this->status_sock > 1) throw(socket_used_for_other);
    struct sockaddr_in serv_addr;
    struct hostent *server;
@@ -46,6 +46,8 @@ bool Socket::connect_to(const char * host,int port){
    serv_addr.sin_port = htons(port);
    if (connect(this->self_socket,(struct sockaddr *) &serv_addr,sizeof(serv_addr)) < 0) throw(connecting_refused);
    this->status_sock = connected;
+   setsockopt_(self_socket,SOL_SOCKET, SO_RCVTIMEO, (char *)&timeout, sizeof(timeout) );
+   setsockopt_(self_socket,SOL_SOCKET, SO_SNDTIMEO, (char *)&timeout, sizeof(timeout) );
    return true;
 }bool Socket::binding(const char * host,int port,int maxlisten){
    if(this->status_sock > 1) throw(socket_used_for_other);
